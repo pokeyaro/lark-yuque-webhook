@@ -7,3 +7,6 @@
 ### 更新日志
 - v1.0.0 更新机器人对话功能
 
+
+### 截图
+![image](https://user-images.githubusercontent.com/58482090/166675476-3866a1e4-3f58-4eec-a2da-6dd2211793be.png)
