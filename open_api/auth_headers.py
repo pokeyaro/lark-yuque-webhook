@@ -1,11 +1,8 @@
 # -*- coding: UTF-8 -*-
-import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+# import os, sys; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import json
 import requests
-from settings import APP_ID, APP_SECRET
+from config.settings import APP_ID, APP_SECRET
 
 def access_token() -> dict:
     """

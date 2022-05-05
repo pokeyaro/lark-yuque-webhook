@@ -3,13 +3,10 @@
 One-time use:
 feishu app is connected with the back-end web service for the first time;
 """
-import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+# import os, sys; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import json
 from flask import Flask, Response, request, abort
-from settings import PORT
+from config.settings import PORT
 from utils.decrypt_key import parse_event
 
 

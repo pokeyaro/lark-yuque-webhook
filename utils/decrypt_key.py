@@ -9,15 +9,12 @@
 使用iv和key对事件内容加密得到encryped_event；
 应用收到的密文encrypt为base64(iv+encryped_event)。
 """
-import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+# import os, sys; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import hashlib
 import base64
 import json
 from Crypto.Cipher import AES
-from settings import ENCRYPT_KEY
+from config.settings import ENCRYPT_KEY
 
 class AESCipher(object):
     def __init__(self, key):

@@ -1,13 +1,10 @@
 # -*- coding: UTF-8 -*-
-import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+# import os, sys; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import requests
 import json
 import time
 from flask import Flask, Response, request, abort
-from settings import PORT, APP_ID
+from config.settings import PORT, APP_ID
 from open_api.bot_message import reply_meg
 from utils.decrypt_key import parse_event
 from utils.nt_hash import nt

@@ -1,8 +1,5 @@
 # -*- coding: UTF-8 -*-
-import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+# import os, sys; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import json
 import requests
 from open_api.auth_headers import access_token
@@ -11,6 +8,8 @@ def reply_meg(msg_id: str, msg_type: str, content: dict) -> bool:
     """
     Robot reply message api.
     """
+    if not content:
+        return False
     headers = access_token()
     if not headers:
         return False
