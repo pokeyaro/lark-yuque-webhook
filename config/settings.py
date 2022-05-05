@@ -13,7 +13,7 @@ URLS = {
     'events': '/event/',
 
     # 飞书自建应用中交互机器人的路由
-    'larkbot': '/bot/',
+    'larkbot': '/card/',
 
     # 语雀第三方消息推送的路由
     'yuque': '/hook/'

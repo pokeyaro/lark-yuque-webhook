@@ -63,6 +63,8 @@ def start(port: int):
                         for i in mention_bot:
                             if i['name'] == APP_NAME:
                                 if content.get('text').strip() != i['key']:
+                                    real_msg = content.get('text').strip().replace(i['key'], "").strip()
+                                    content = {'text': real_msg}
                                     data = bot_msg_talking(content, 1)
                                 else:
                                     data = {'text': empty_dialogue()}

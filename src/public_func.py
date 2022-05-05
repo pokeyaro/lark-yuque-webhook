@@ -16,7 +16,7 @@ def empty_dialogue() -> str:
 
 def bot_msg_talking(content: dict, flag: int = 1) -> dict:
     """
-    flag: 1 means 'p2p' (default)
+    flag: 1 means 'p2p' or @bot (default)
           0 means 'group'
     """
     if not content:
@@ -57,6 +57,13 @@ def bot_msg_talking(content: dict, flag: int = 1) -> dict:
                 for i in keyworks4:
                     if i in info.lower():
                         data = {'text': 'Hi Bro ~\n使用 /help 来唤醒我呀!'}
+                        break
+
+                # 情景5
+                keyworks5 = ['/help', 'help', NICK_NAME]
+                for i in keyworks5:
+                    if i == info:
+                        data = {'text': '叫我嘛?'}
                         break
 
             elif flag == 0:
