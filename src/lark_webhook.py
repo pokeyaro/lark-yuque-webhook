@@ -3,6 +3,7 @@
 import datetime
 import requests
 import json
+import time
 from flask import Flask, Response, request, abort
 from config.settings import APP_ID, APP_NAME, URLS, PORT, NICK_NAME
 from src.public_func import bot_msg_talking, empty_dialogue
@@ -12,10 +13,14 @@ from utils.nt_hash import nt
 
 
 def start(port: int):
+    # chat_old = None
+    ctime_old = int(time.time())
     app = Flask(__name__)
 
     @app.route(URLS['events'], methods=['POST'])
     def callback_event():
+        # nonlocal chat_old
+        nonlocal ctime_old
         if (request.method == 'POST'):
             # Received event ciphertext
             encrypt = request.json.get('encrypt')
@@ -44,36 +49,44 @@ def start(port: int):
                 # Verify event_data
                 event_data = data.get('event')
 
-                # get message content
-                content = json.loads(event_data.get('message').get('content'))
-                meg_id = event_data.get('message').get('message_id')
+                # Deduplication of backend messages
+                # chat_hash = nt(event_data.get('message').get('content'))
+                create_time = int(str(data.get('header').get('create_time')[:-3]))
+                # if (chat_hash != chat_old) and (create_time > ctime_old):
+                if create_time > ctime_old:
+                    # get message content
+                    content = json.loads(event_data.get('message').get('content'))
+                    meg_id = event_data.get('message').get('message_id')
 
-                # hook chat bot message type
-                chat_type = event_data.get('message').get('chat_type')
-                data = {}
-                # hook private chat bot message
-                if chat_type == "p2p":
-                    data = bot_msg_talking(content, 1)
+                    # hook chat bot message type
+                    chat_type = event_data.get('message').get('chat_type')
+                    data = {}
+                    # hook private chat bot message
+                    if chat_type == "p2p":
+                        data = bot_msg_talking(content, 1)
 
-                # messages in the hook group
-                elif chat_type == "group":
-                    mention_bot = event_data.get('message').get('mentions')
-                    # @bot msg
-                    if mention_bot:
-                        for i in mention_bot:
-                            if i['name'] == APP_NAME:
-                                if content.get('text').strip() != i['key']:
-                                    real_msg = content.get('text').strip().replace(i['key'], "").strip()
-                                    content = {'text': real_msg}
-                                    data = bot_msg_talking(content, 1)
-                                else:
-                                    data = {'text': empty_dialogue()}
-                    # no @bot msg
-                    else:
-                        data = bot_msg_talking(content, 0)
+                    # messages in the hook group
+                    elif chat_type == "group":
+                        mention_bot = event_data.get('message').get('mentions')
+                        # @bot msg
+                        if mention_bot:
+                            for i in mention_bot:
+                                if i['name'] == APP_NAME:
+                                    if content.get('text').strip() != i['key']:
+                                        real_msg = content.get('text').strip().replace(i['key'], "").strip()
+                                        content = {'text': real_msg}
+                                        data = bot_msg_talking(content, 1)
+                                    else:
+                                        data = {'text': empty_dialogue()}
+                        # no @bot msg
+                        else:
+                            data = bot_msg_talking(content, 0)
 
-                # send meg
-                reply_meg(meg_id, msg_type="text", content=data)
+                    # send meg
+                    reply_meg(meg_id, msg_type="text", content=data)
+
+                # limit update time
+                ctime_old = create_time
 
                 return Response('"{}"', status=200, content_type='application/json')
             else:
