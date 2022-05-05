@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 # import os, sys; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config.settings import NICK_NAME
 import random
 
 
@@ -8,7 +9,7 @@ def empty_dialogue() -> str:
                     '这是表达个锤子? 艾特不说话, 等于耍流氓!', 
                     '心情好, 告诉你个秘密, 想要寻求帮助: /help',
                     '我在赚我的小目标, 十个亿以下的项目不要打扰我!',
-                    '要有礼貌, 说 \'呼叫小助手\', 我看见会回复的!']
+                    f'礼貌点呦, 呼叫 \'{NICK_NAME}\', 看见会回复的!']
     res = random.choice(choose_reply)
     return res
 
@@ -48,7 +49,7 @@ def bot_msg_talking(content: dict, flag: int = 1) -> dict:
                 keyworks3 = ['ha', 'o', 'en', '嗯', '哦', '啊', '呃', '额', '哈', '好', '是', '行']
                 for i in keyworks3:
                     if (info in i*3) or (i in info):
-                        data = {'text': '已阅。'}
+                        data = {'text': f'{NICK_NAME}已阅。'}
                         break
 
                 # 情景4
@@ -59,7 +60,7 @@ def bot_msg_talking(content: dict, flag: int = 1) -> dict:
                         break
 
             elif flag == 0:
-                if info == "/help" or info == "呼叫小助手":
+                if info == "/help" or info == NICK_NAME:
                     # 需要使用卡片
                     data = {'text': '叫我干甚?'}
     return data

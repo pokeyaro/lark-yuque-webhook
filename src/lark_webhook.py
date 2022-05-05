@@ -3,9 +3,8 @@
 import datetime
 import requests
 import json
-# import time
 from flask import Flask, Response, request, abort
-from config.settings import PORT, APP_ID, APP_NAME
+from config.settings import APP_ID, APP_NAME, URLS, PORT, NICK_NAME
 from src.public_func import bot_msg_talking, empty_dialogue
 from open_api.bot_message import reply_meg
 from utils.decrypt_key import parse_event
@@ -13,13 +12,10 @@ from utils.nt_hash import nt
 
 
 def start(port: int):
-    # chat_old, ctime_old = None, int(time.time())
-
     app = Flask(__name__)
 
-    @app.route('/event/', methods=['POST'])
+    @app.route(URLS['events'], methods=['POST'])
     def callback_event():
-        # nonlocal chat_old, ctime_old
         if (request.method == 'POST'):
             # Received event ciphertext
             encrypt = request.json.get('encrypt')
@@ -48,12 +44,6 @@ def start(port: int):
                 # Verify event_data
                 event_data = data.get('event')
 
-                # obsolete v1.0:
-                # Deduplication of backend messages
-                # chat_hash = nt(event_data.get('message').get('content'))
-                # create_time = int(str(data.get('header').get('create_time')[:-3]))
-                # if (chat_hash != chat_old) and (create_time > ctime_old):
-               
                 # get message content
                 content = json.loads(event_data.get('message').get('content'))
                 meg_id = event_data.get('message').get('message_id')
@@ -83,9 +73,6 @@ def start(port: int):
                 # send meg
                 reply_meg(meg_id, msg_type="text", content=data)
 
-                # obsolete v1.0:
-                # print(f"chat_hash {chat_hash}, chat_old {chat_old}\ncreate_time {create_time}, ctime_old {ctime_old}")
-                # chat_old, ctime_old = chat_hash, create_time
                 return Response('"{}"', status=200, content_type='application/json')
             else:
                 # HTTP 403 Forbidden.
@@ -95,7 +82,7 @@ def start(port: int):
             abort(405)
 
 
-    @app.route('/bot/', methods=['POST'])
+    @app.route(URLS['larkbot'], methods=['POST'])
     def callback_bot():
         if (request.method != 'POST'):
             abort(405)
@@ -108,7 +95,7 @@ def start(port: int):
                 return Response(json.dumps(data), status=200, content_type='application/json')
 
 
-    @app.route('/hook/', methods=['POST'])
+    @app.route(URLS['yuque'], methods=['POST'])
     def callback_hook():
         if (request.method != 'POST'):
             abort(405)
@@ -141,7 +128,7 @@ def start(port: int):
                     'update_time': yq_time_local,
                     'action_type': yq_type
                 }
-                print(f"这是一条来自小雀的温馨提醒呦～\n北京时间 [{data_filter['update_time']}] 收录于 \'{data_filter['belong_wiki']}\' 中的《{data_filter['title']}》已完成{data_filter['action_type']}。")
+                print(f"这是一条来自{NICK_NAME}的温馨提醒呦～\n北京时间 [{data_filter['update_time']}] 收录于 \'{data_filter['belong_wiki']}\' 中的《{data_filter['title']}》已完成{data_filter['action_type']}。")
 
             # 当语雀用户发表/更新/回复一条评论
             elif webhook_type in ("comment_create", "comment_update", "comment_reply_create"):
@@ -171,7 +158,7 @@ def start(port: int):
                     'update_time': yq_time_local,
                     'action_type': yq_type
                 }
-                print(f"这是一条来自小雀的温馨提醒呦～\n北京时间 [{data_filter['update_time']}]  用户 \'{data_filter['user']}\' 在《{data_filter['title']}》下方进行了留言（{data_filter['action_type']}）。")
+                print(f"这是一条来自{NICK_NAME}的温馨提醒呦～\n北京时间 [{data_filter['update_time']}]  用户 \'{data_filter['user']}\' 在《{data_filter['title']}》下方进行了留言（{data_filter['action_type']}）。")
             else:
                 # print(request.json)
                 abort(403)
