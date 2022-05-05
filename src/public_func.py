@@ -24,7 +24,7 @@ def bot_msg_talking(content: dict, flag: int = 1) -> dict:
         data = {}
         info = content.get('text')
         if not info:
-            data = {'text': '给我整不会了...'}
+            data = {'text': '人类迷惑行为大赏, 愣是给我整不会了...'}
         else:
             if flag == 1:
                 # 情景0
