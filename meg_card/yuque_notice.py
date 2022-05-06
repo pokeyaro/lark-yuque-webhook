@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-
 def forward_news(**kwargs) -> dict:
     cards = {
         "header": {
@@ -92,7 +91,7 @@ def forward_news(**kwargs) -> dict:
                 "img_key": "img_v2_508b657d-5903-437a-a5b2-1686d9698deg",
                 "tag": "img"
             }, {
-                "content": "小雀同学: 如有其它疑问, 请告诉万能的 @头条爸爸 (https://www.toutiao.com)",
+                "content": f"小雀同学: 来自'{kwargs['group_name']}'的各位好，如有其它疑问，请告诉万能的 @头条爸爸 (toutiao.com)",
                 "tag": "plain_text"
             }],
             "tag": "note"
@@ -106,7 +105,8 @@ if __name__ == '__main__':
         "hook_type": "内容发布（初版）",
         "title_name": "百度知道《疫情啥时候结束》",
         "file_url": "www.baidu.com",
-        "update_time": "北京时间 [2021-05-25 17:21:14]"
+        "update_time": "北京时间 [2021-05-25 17:21:14]",
+        "group_name": "油茶麻花团队"
     }
     res = forward_news(**data)
     print(res)
