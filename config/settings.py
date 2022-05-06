@@ -4,10 +4,10 @@ import os
 # 项目根路径
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# 端口号
+# 应用端口号
 PORT = 8888
 
-# API 网关
+# 应用 API 网关
 URLS = { 
     # 飞书自建应用中事件订阅的路由
     'events': '/event/',
@@ -29,4 +29,6 @@ ENCRYPT_KEY = "xxxxxxxxxxxxxx"
 # 定义机器人昵称 | 群组中唤醒机器人（不使用@Bot）
 NICK_NAME = "小雀同学"
 
+# 语雀知识存储库的地址
+REPO_URL = "https://www.yuque.com/"            # 这里默认为个人级别; 如果使用空间级别, 请自行修改三级域名。
 

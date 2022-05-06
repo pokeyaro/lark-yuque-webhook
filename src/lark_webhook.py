@@ -5,8 +5,9 @@ import requests
 import json
 import time
 from flask import Flask, Response, request, abort
-from config.settings import APP_ID, APP_NAME, URLS, PORT, NICK_NAME
-from src.public_func import bot_msg_talking, empty_dialogue
+from config.settings import APP_ID, URLS, PORT, NICK_NAME, REPO_URL
+from src.reply_content import bot_msg_talking, empty_dialogue, card_sync
+from open_api.get_robot_info import get_app_info
 from open_api.bot_message import reply_meg
 from utils.decrypt_key import parse_event
 from utils.nt_hash import nt
@@ -14,13 +15,14 @@ from utils.nt_hash import nt
 
 def start(port: int):
     # chat_old = None
+    robot_info = None
     ctime_old = int(time.time())
     app = Flask(__name__)
 
     @app.route(URLS['events'], methods=['POST'])
     def callback_event():
         # nonlocal chat_old
-        nonlocal ctime_old
+        nonlocal robot_info, ctime_old
         if (request.method == 'POST'):
             # Received event ciphertext
             encrypt = request.json.get('encrypt')
@@ -42,7 +44,11 @@ def start(port: int):
             if app_id != APP_ID:
                 # HTTP 400 Bad Request.
                 abort(400)
-    
+
+            # Get app info
+            if not robot_info:
+                robot_info = get_app_info()
+
             # Verify event_type
             event_type = header_data.get('event_type')
             if event_type == "im.message.receive_v1":
@@ -71,7 +77,7 @@ def start(port: int):
                         # @bot msg
                         if mention_bot:
                             for i in mention_bot:
-                                if i['name'] == APP_NAME:
+                                if i['name'] == robot_info['app_name']:
                                     if content.get('text').strip() != i['key']:
                                         real_msg = content.get('text').strip().replace(i['key'], "").strip()
                                         content = {'text': real_msg}
@@ -112,11 +118,25 @@ def start(port: int):
 
     @app.route(URLS['yuque'], methods=['POST'])
     def callback_hook():
+        global REPO_URL
         if (request.method != 'POST'):
             abort(405)
         else:
+            # yuque-site test
+            text = request.json.get('markdown').get('title')
+            if "测试消息" in text:
+                return Response(status=200, content_type='text/html')
+
+            # check base url
+            if not REPO_URL.endswith("/"):
+                REPO_URL += "/"
+            if not REPO_URL.startswith("http"):
+                REPO_URL = "https://" + REPO_URL
+
+            # content & type
             yq_data = request.json.get('data')
             webhook_type = yq_data.get('webhook_subject_type')
+
             # 当语雀用户发布或更新一篇文章
             if webhook_type in ("publish", "update"):
                 # format yuque time
@@ -127,13 +147,13 @@ def start(port: int):
                 # yuque basic info
                 yq_title = yq_data.get('title')
                 yq_wiki = yq_data.get('user').get('name')
-                yq_url = "https://field.yuque.com/" + yq_data.get('path')
+                yq_url = REPO_URL + yq_data.get('path')
 
                 # format yuque action
                 if webhook_type == "publish":
-                    yq_type = "初次发布"
+                    yq_type = "内容发布（初版）"
                 elif webhook_type == "update":
-                    yq_type = "更新"
+                    yq_type = "内容更新（迭代）"
 
                 # data processing
                 data_filter = {
@@ -143,7 +163,15 @@ def start(port: int):
                     'update_time': yq_time_local,
                     'action_type': yq_type
                 }
-                print(f"这是一条来自{NICK_NAME}的温馨提醒呦～\n北京时间 [{data_filter['update_time']}] 收录于 \'{data_filter['belong_wiki']}\' 中的《{data_filter['title']}》已完成{data_filter['action_type']}。")
+                message = f"这是一条来自{NICK_NAME}的温馨提醒呦～\n北京时间 [{data_filter['update_time']}] 收录于 \'{data_filter['belong_wiki']}\' 中的《{data_filter['title']}》已完成{data_filter['action_type']}。"
+
+                # collect
+                data = { 
+                    'code': 0,
+                    'message': message,
+                    'type': 'main body',
+                    'data': data_filter
+                }
 
             # 当语雀用户发表/更新/回复一条评论
             elif webhook_type in ("comment_create", "comment_update", "comment_reply_create"):
@@ -155,11 +183,11 @@ def start(port: int):
                 # yuque basic info
                 yq_user = yq_data.get('user').get('name')
                 yq_title = yq_data.get('commentable').get('title')
-                yq_url = "https://field.yuque.com/" + yq_data.get('path')
+                yq_url = REPO_URL + yq_data.get('path')
 
                 # format yuque action
                 if webhook_type == "comment_create":
-                    yq_type = "新增评论+1"
+                    yq_type = "新增评论 +1"
                 elif webhook_type == "comment_update":
                     yq_type = "更新评论"
                 elif webhook_type == "comment_reply_create":
@@ -173,14 +201,24 @@ def start(port: int):
                     'update_time': yq_time_local,
                     'action_type': yq_type
                 }
-                print(f"这是一条来自{NICK_NAME}的温馨提醒呦～\n北京时间 [{data_filter['update_time']}]  用户 \'{data_filter['user']}\' 在《{data_filter['title']}》下方进行了留言（{data_filter['action_type']}）。")
+                message = f"这是一条来自{NICK_NAME}的温馨提醒呦～\n北京时间 [{data_filter['update_time']}]  用户 \'{data_filter['user']}\' 在《{data_filter['title']}》下方进行了留言（{data_filter['action_type']}）。"
+
+                # collect
+                data = { 
+                    'code': 0,
+                    'message': message,
+                    'type': 'comment',
+                    'data': data_filter
+                }
             else:
                 # print(request.json)
                 abort(403)
-            
-            print(data_filter)
-            return Response(json.dumps({}), status=200, content_type='application/json')
 
+            # message synchronization
+            card_sync(**data)
+
+            # request return value
+            return Response(json.dumps({}), status=200, content_type='application/json')
 
     app.run(host='0.0.0.0', debug=True, port=port)
 

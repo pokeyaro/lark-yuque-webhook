@@ -2,10 +2,13 @@
 
 def forward_news(**kwargs) -> dict:
     cards = {
+        "config": {
+            "wide_screen_mode": True
+        },
         "header": {
             "template": "green",
             "title": {
-                "content": "🪶 小雀温馨提醒：收到一条来自远方的消息推送",
+                "content": "🪶 小雀温馨提醒：收到一条来自 BAT 的消息推送",
                 "tag": "plain_text"
             }
         },
@@ -37,7 +40,7 @@ def forward_news(**kwargs) -> dict:
             }, {
                 "is_short": True,
                 "text": {
-                    "content": f"**📘 事件对象：**\n     收录于[{kwargs['title_name']}]({kwargs['file_url']})",
+                    "content": f"**📘 事件描述：**\n     [{kwargs['title_name']}]({kwargs['file_url']})",
                     "tag": "lark_md"
                 }
             }, {
@@ -91,7 +94,7 @@ def forward_news(**kwargs) -> dict:
                 "img_key": "img_v2_508b657d-5903-437a-a5b2-1686d9698deg",
                 "tag": "img"
             }, {
-                "content": f"小雀同学: 来自'{kwargs['group_name']}'的各位好，如有其它疑问，请告诉万能的 @头条爸爸 (toutiao.com)",
+                "content": f"小雀同学: 来自 '{kwargs['group_name']}' 的各位好，如有其它疑问，请告诉万能的 @头条爸爸 (toutiao.com)",
                 "tag": "plain_text"
             }],
             "tag": "note"

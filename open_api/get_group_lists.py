@@ -8,16 +8,22 @@ def get_groups() -> list:
     Get the list of group information where the robot is located.
     """
     data = []
+    headers = access_token()
+    if not headers:
+        return data
+    url = "https://open.feishu.cn/open-apis/im/v1/chats"
     query_params = {
         'user_id_type': 'open_id',
         'page_size': 100
     }
-    headers = access_token()
-    if not headers:
-        return data
-    url = f"https://open.feishu.cn/open-apis/im/v1/chats?user_id_type={query_params['user_id_type']}&page_size={query_params['page_size']}"
     payload = {}
-    response = requests.request(method="GET", url=url, headers=headers, data=payload)
+    response = requests.request(
+        method="GET",
+        url=url,
+        params=query_params,
+        headers=headers,
+        data=payload
+    )
     if response.status_code == 200:
         groups = response.json().get('data').get('items')
         for item in groups:

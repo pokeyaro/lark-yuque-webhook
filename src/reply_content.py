@@ -1,9 +1,14 @@
 # -*- coding: UTF-8 -*-
 # import os, sys; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config.settings import NICK_NAME
+from open_api.get_group_lists import get_groups
+from open_api.bot_message import send_card
+from meg_card.yuque_notice import forward_news
+import threading
 import random
 
 
+# 如果是群聊中仅@Bot, 无任何内容的逻辑
 def empty_dialogue() -> str:
     choose_reply = ['干嘛, 没空陪你撩闲! 你待一边活泥巴去吧!', 
                     '这是表达个锤子? 艾特不说话, 等于耍流氓!', 
@@ -14,6 +19,7 @@ def empty_dialogue() -> str:
     return res
 
 
+# 跟Bot对话的能力
 def bot_msg_talking(content: dict, flag: int = 1) -> dict:
     """
     flag: 1 means 'p2p' or @bot (default)
@@ -73,6 +79,47 @@ def bot_msg_talking(content: dict, flag: int = 1) -> dict:
     return data
 
 
+# Bot推送卡片消息任务 - 使用多线程
+def __send_task(args, kwargs):
+    group_id = args['gid']
+    group_name = args['gname']
+    kwargs.update({
+        "group_name": group_name
+    })
+    card = forward_news(**kwargs)
+    send_card(group_id, card)
+
+def card_sync(**kwargs):
+    # Classification processing
+    if kwargs['type'] == "main body":
+        title_desc = f"'{kwargs['data']['belong_wiki']}' 发布了《{kwargs['data']['title']}》内容"
+        update_time = f"北京时间 [{kwargs['data']['update_time']}]"
+    elif kwargs['type'] == "comment":
+        title_desc = f"用户 '{kwargs['data']['user']}' 在《{kwargs['data']['title']}》下进行了留言"
+        update_time = f"最近更新 [{kwargs['data']['update_time']}]"
+
+    # format saying
+    data = {
+         "hook_type": kwargs['data']['action_type'],
+         "title_name": title_desc,
+         "file_url": kwargs['data']['address_url'],
+         "update_time": update_time
+    }
+
+    # action sync
+    group_list = get_groups()
+    send_list = []
+    for i in group_list:
+        p = threading.Thread(target=__send_task, args=(i, data))
+        send_list.append(p)
+        p.start()
+    for i in send_list:
+        i.join()
+    # print("done")
+
+
+
 if __name__ == '__main__':
-    bot_msg_talking({})
+    # card_sync(**data)
+    pass
 
