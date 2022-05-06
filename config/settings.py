@@ -26,9 +26,6 @@ APP_SECRET = "xxxxxxxxxxxxx"
 # 飞书开放平台 | 企业自建应用 | 事件订阅 | 开启Encrypt Key
 ENCRYPT_KEY = "xxxxxxxxxxxxxx"
 
-# 飞书开放平台 | 企业自建应用 | 应用名称
-APP_NAME = "Yuque Assistant"
-
 # 定义机器人昵称 | 群组中唤醒机器人（不使用@Bot）
 NICK_NAME = "小雀同学"
 

@@ -3,7 +3,6 @@
 import requests
 from open_api.auth_headers import access_token
 
-
 def get_groups() -> list:
     """
     Get the list of group information where the robot is located.

@@ -5,11 +5,11 @@ import random
 
 
 def empty_dialogue() -> str:
-    choose_reply = ['¸ÉÂï, Ã»¿ÕÅãÄãÁÃÏĞ! Äã´ıÒ»±ß»îÄà°ÍÈ¥°É!', 
-                    'ÕâÊÇ±í´ï¸ö´¸×Ó? °¬ÌØ²»Ëµ»°, µÈÓÚË£Á÷Ã¥!', 
-                    'ĞÄÇéºÃ, ¸æËßÄã¸öÃØÃÜ, ÏëÒªÑ°Çó°ïÖú: /help',
-                    'ÎÒÔÚ×¬ÎÒµÄĞ¡Ä¿±ê, Ê®¸öÒÚÒÔÏÂµÄÏîÄ¿²»Òª´òÈÅÎÒ!',
-                    f'ÀñÃ²µãßÏ, ºô½Ğ \'{NICK_NAME}\', ¿´¼û»á»Ø¸´µÄ!']
+    choose_reply = ['å¹²å˜›, æ²¡ç©ºé™ªä½ æ’©é—²! ä½ å¾…ä¸€è¾¹æ´»æ³¥å·´å»å§!', 
+                    'è¿™æ˜¯è¡¨è¾¾ä¸ªé”¤å­? è‰¾ç‰¹ä¸è¯´è¯, ç­‰äºè€æµæ°“!', 
+                    'å¿ƒæƒ…å¥½, å‘Šè¯‰ä½ ä¸ªç§˜å¯†, æƒ³è¦å¯»æ±‚å¸®åŠ©: /help',
+                    'æˆ‘åœ¨èµšæˆ‘çš„å°ç›®æ ‡, åä¸ªäº¿ä»¥ä¸‹çš„é¡¹ç›®ä¸è¦æ‰“æ‰°æˆ‘!',
+                    f'ç¤¼è²Œç‚¹å‘¦, å‘¼å« \'{NICK_NAME}\', çœ‹è§ä¼šå›å¤çš„!']
     res = random.choice(choose_reply)
     return res
 
@@ -20,56 +20,56 @@ def bot_msg_talking(content: dict, flag: int = 1) -> dict:
           0 means 'group'
     """
     if not content:
-        data = {'text': '·çÌ«´ó, ÎÒÌı²»ÇåÑ½!'}
+        data = {'text': 'é£å¤ªå¤§, æˆ‘å¬ä¸æ¸…å‘€!'}
     else:
         data = {}
         info = content.get('text')
         if not info:
-            data = {'text': 'ÈËÀàÃÔ»óĞĞÎª´óÉÍ, ã¶ÊÇ¸øÎÒÕû²»»áÁË...'}
+            data = {'text': 'äººç±»è¿·æƒ‘è¡Œä¸ºå¤§èµ, æ„£æ˜¯ç»™æˆ‘æ•´ä¸ä¼šäº†...'}
         else:
             if flag == 1:
-                # Çé¾°0
-                data = {'text': "ÄãÔÚ½²É¶×ÓßÏ?"}
+                # æƒ…æ™¯0
+                data = {'text': "ä½ åœ¨è®²å•¥å­å‘¦?"}
 
-                # Çé¾°1
-                keyworks1 = ['hhh', 'hehe', 'ºÇºÇ']
+                # æƒ…æ™¯1
+                keyworks1 = ['hhh', 'hehe', 'å‘µå‘µ']
                 for i in keyworks1:
                     if i in info:
-                        data = {'text': 'ºÇºÇÄã´óÒ¯!\n°¤ÀÍ×ÊÒ»´¸?'}
+                        data = {'text': 'å‘µå‘µä½ å¤§çˆ·!\næŒ¨åŠ³èµ„ä¸€é”¤?'}
                         break
 
-                # Çé¾°2
-                keyworks2 = ['ÔÚ¸ãÉ¶', '¸ÉÉ¶ÄØ', '¸ÉÂïÄØ', 'ÔÚ¸ÉÂï', 'ÔÚ¸ÉÉ¶', '¸ÉÉ¶×Ó', '¸ãÉ¶ÄØ', '×öÊ²Ã´', '¸ãÊ²Ã´', '¸ÉÊ²Ã´', 'ÏĞ×ÅÃ´']
+                # æƒ…æ™¯2
+                keyworks2 = ['åœ¨æå•¥', 'å¹²å•¥å‘¢', 'å¹²å˜›å‘¢', 'åœ¨å¹²å˜›', 'åœ¨å¹²å•¥', 'å¹²å•¥å­', 'æå•¥å‘¢', 'åšä»€ä¹ˆ', 'æä»€ä¹ˆ', 'å¹²ä»€ä¹ˆ', 'é—²ç€ä¹ˆ']
                 for i in keyworks2:
                     if i in info:
-                        data = {'text': 'Ë¢¶¶Òô!'}
+                        data = {'text': 'åˆ·æŠ–éŸ³!'}
                         break
 
-                # Çé¾°3
-                keyworks3 = ['ha', 'o', 'en', 'àÅ', 'Å¶', '°¡', 'ßÀ', '¶î', '¹ş', 'ºÃ', 'ÊÇ', 'ĞĞ']
+                # æƒ…æ™¯3
+                keyworks3 = ['ha', 'o', 'en', 'å—¯', 'å“¦', 'å•Š', 'å‘ƒ', 'é¢', 'å“ˆ', 'å¥½', 'æ˜¯', 'è¡Œ']
                 for i in keyworks3:
                     if (info in i*3) or (i in info):
-                        data = {'text': f'{NICK_NAME}ÒÑÔÄ¡£'}
+                        data = {'text': f'{NICK_NAME}å·²é˜…ã€‚'}
                         break
 
-                # Çé¾°4
-                keyworks4 = ['hello', 'hi', 'ÄãºÃ']
+                # æƒ…æ™¯4
+                keyworks4 = ['hello', 'hi', 'ä½ å¥½']
                 for i in keyworks4:
                     if i in info.lower():
-                        data = {'text': 'Hi Bro ~\nÊ¹ÓÃ /help À´»½ĞÑÎÒÑ½!'}
+                        data = {'text': 'Hi Bro ~\nä½¿ç”¨ /help æ¥å”¤é†’æˆ‘å‘€!'}
                         break
 
-                # Çé¾°5
+                # æƒ…æ™¯5
                 keyworks5 = ['/help', 'help', NICK_NAME]
                 for i in keyworks5:
                     if i == info:
-                        data = {'text': '½ĞÎÒÂï?'}
+                        data = {'text': 'å«æˆ‘å˜›?'}
                         break
 
             elif flag == 0:
                 if info == "/help" or info == NICK_NAME:
-                    # ĞèÒªÊ¹ÓÃ¿¨Æ¬
-                    data = {'text': '½ĞÎÒ¸ÉÉõ?'}
+                    # éœ€è¦ä½¿ç”¨å¡ç‰‡
+                    data = {'text': 'å«æˆ‘å¹²ç”š?'}
     return data
 
 
