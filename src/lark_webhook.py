@@ -123,9 +123,10 @@ def start(port: int):
             abort(405)
         else:
             # yuque-site test
-            text = request.json.get('markdown').get('title')
-            if "测试消息" in text:
-                return Response(status=200, content_type='text/html')
+            attr_md = request.json.get('markdown')
+            if attr_md:
+                if "测试消息" in attr_md.get('title'):
+                    return Response(status=200, content_type='text/html')
 
             # check base url
             if not REPO_URL.endswith("/"):

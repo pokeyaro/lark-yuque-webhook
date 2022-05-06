@@ -118,7 +118,6 @@ def card_sync(**kwargs):
     # print("done")
 
 
-
 if __name__ == '__main__':
     # card_sync(**data)
     pass
