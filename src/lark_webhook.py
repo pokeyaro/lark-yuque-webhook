@@ -55,6 +55,14 @@ def start(port: int):
                 # Verify event_data
                 event_data = data.get('event')
 
+                # get sender open_id and chat_id
+                sender = event_data.get('sender').get('sender_id').get('open_id')
+                chat_id = event_data.get('message').get('chat_id')
+                meta_info = {
+                    'open_id': sender,
+                    'chat_id': chat_id
+                }
+
                 # Deduplication of backend messages
                 # chat_hash = nt(event_data.get('message').get('content'))
                 create_time = int(str(data.get('header').get('create_time')[:-3]))
@@ -69,10 +77,12 @@ def start(port: int):
                     data = {}
                     # hook private chat bot message
                     if chat_type == "p2p":
-                        data = bot_msg_talking(content, 1)
+                        meta_info.update({'class': 'p2p'})
+                        data = bot_msg_talking(meta_info, content, 1)
 
                     # messages in the hook group
                     elif chat_type == "group":
+                        meta_info.update({'class': '@bot'})
                         mention_bot = event_data.get('message').get('mentions')
                         # @bot msg
                         if mention_bot:
@@ -81,12 +91,12 @@ def start(port: int):
                                     if content.get('text').strip() != i['key']:
                                         real_msg = content.get('text').strip().replace(i['key'], "").strip()
                                         content = {'text': real_msg}
-                                        data = bot_msg_talking(content, 1)
+                                        data = bot_msg_talking(meta_info, content, 1)
                                     else:
                                         data = {'text': empty_dialogue()}
                         # no @bot msg
                         else:
-                            data = bot_msg_talking(content, 0)
+                            data = bot_msg_talking(meta_info, content, 0)
 
                     # send meg
                     reply_meg(meg_id, msg_type="text", content=data)

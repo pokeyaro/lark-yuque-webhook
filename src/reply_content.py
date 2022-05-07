@@ -1,11 +1,13 @@
 # -*- coding: UTF-8 -*-
 # import os, sys; sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config.settings import NICK_NAME
+from config.settings import NICK_NAME, BASE_PATH
+from open_api.bot_message import send_card, send_u_visible_msg, del_u_visible_msg
 from open_api.get_group_lists import get_groups
-from open_api.bot_message import send_card
 from meg_card.yuque_notice import forward_news
+from meg_card.yuque_card import rjson
 import threading
 import random
+import time
 
 
 # 如果是群聊中仅@Bot, 无任何内容的逻辑
@@ -19,8 +21,19 @@ def empty_dialogue() -> str:
     return res
 
 
+# 群聊随机话术
+def gchat_random_talk() -> str:
+    choose_reply = ['好安静的群, 我出来活跃一下气氛~', 
+                    '1, 2, 3, 4, 5... 我出来炸尸了!', 
+                    '快乐的死法就是躺着数钱数到死也数不完。',
+                    f'大噶好, 请叫我热爱僧活的{NICK_NAME}!',
+                    '好无聊啊, 来个活人陪朕唠唠嗑!']
+    res = random.choice(choose_reply)
+    return res
+
+
 # 跟Bot对话的能力
-def bot_msg_talking(content: dict, flag: int = 1) -> dict:
+def bot_msg_talking(meta: dict, content: dict, flag: int = 1) -> dict:
     """
     flag: 1 means 'p2p' or @bot (default)
           0 means 'group'
@@ -69,14 +82,29 @@ def bot_msg_talking(content: dict, flag: int = 1) -> dict:
                 keyworks5 = ['/help', 'help', NICK_NAME]
                 for i in keyworks5:
                     if i == info:
-                        data = {'text': '叫我嘛?'}
+                        if meta['class'] == "@bot":
+                            p = threading.Thread(target=__temp_task, args=(meta,))
+                            p.start()
+                        data = {'text': '诶~ 有人呼喊我?'}
                         break
 
             elif flag == 0:
                 if info == "/help" or info == NICK_NAME:
-                    # 需要使用卡片
-                    data = {'text': '叫我干甚?'}
+                    if meta['class'] == "@bot":
+                        p = threading.Thread(target=__temp_task, args=(meta,))
+                        p.start()
+                    data = {'text': gchat_random_talk()}
     return data
+
+
+# Bot临时卡片与延迟删除 - 使用多线程
+def __temp_task(meta):
+    # print(f"param id: {meta}")
+    content = rjson()
+    msg_id = send_u_visible_msg(meta, content)
+    if msg_id:
+        time.sleep(60)
+        del_u_visible_msg(msg_id)
 
 
 # Bot推送卡片消息任务 - 使用多线程
@@ -120,5 +148,6 @@ def card_sync(**kwargs):
 
 if __name__ == '__main__':
     # card_sync(**data)
+    # print(rjson())
     pass
 
