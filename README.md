@@ -21,3 +21,5 @@
 
 ### 截图
 ![image](https://user-images.githubusercontent.com/58482090/166675476-3866a1e4-3f58-4eec-a2da-6dd2211793be.png)
+![image](https://user-images.githubusercontent.com/58482090/167250155-29127406-d143-4f26-886a-fba047a9870f.png)
+![image](https://user-images.githubusercontent.com/58482090/167250194-afa278df-d471-4059-9a44-4e96dfa8e0c6.png)
