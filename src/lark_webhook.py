@@ -118,12 +118,45 @@ def start(port: int):
         if (request.method != 'POST'):
             abort(405)
         else:
-            challenge = request.json.get('challenge')
-            if not challenge:
+            data = request.json
+            # Verify challenge (first conn)
+            challenge = data.get('challenge')
+            if challenge:
+                res = {'challenge': challenge}
+                return Response(json.dumps(res), status=200, content_type='application/json')
+
+            # Handling comment likes for interactive cards
+            action = data.get('action')
+            if not action:
                 abort(400)
             else:
-                data = {'challenge': challenge}
-                return Response(json.dumps(data), status=200, content_type='application/json')
+                tag = action.get('tag')
+                if tag != "button":
+                    abort(400)
+                else:
+                    btn_id = action.get('value').get('button_id')
+                    btn_type = action.get('value').get('button_type')
+                    if btn_id == "bd_132529342258964":
+                        real_type = {
+                            'perfect': '哇, 💖 笔芯~',
+                            'great': '诶呦, 不错呦~',
+                            'common': '达咩达咩 🤬 '
+                        }
+                        text_content = real_type.get(btn_type)
+                        res = {
+                            'result': btn_type
+                        }
+                    else:
+                        res = {}
+                    # Reply message
+                    reply_meg(
+                        msg_id=data.get('open_message_id'),
+                        msg_type="text",
+                        content={'text': text_content}
+                    )
+                    ## TODO:
+                    ### 可在此扩展数据持久化及统计分析功能
+                    return Response(json.dumps(res), status=200, content_type='application/json')
 
 
     @app.route(URLS['yuque'], methods=['POST'])

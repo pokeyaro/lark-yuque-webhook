@@ -66,6 +66,10 @@ def forward_news(**kwargs) -> dict:
                     "content": "🥶 吃瓜",
                     "tag": "lark_md"
                 },
+                "value": {
+                    "button_type": "common",
+                    "button_id": "bd_132529342258964",
+                },
                 "type": "default"
             }, {
                 "tag": "button",
@@ -73,14 +77,22 @@ def forward_news(**kwargs) -> dict:
                     "content": "👍 炒鸡",
                     "tag": "lark_md"
                 },
-                "type": "default"
+                "value": {
+                    "button_type": "great",
+                    "button_id": "bd_132529342258964",
+                },
+                "type": "primary"
             }, {
                 "tag": "button",
                 "text": {
                     "content": "🥳 爆赞",
                     "tag": "lark_md"
                 },
-                "type": "default"
+                "value": {
+                    "button_type": "perfect",
+                    "button_id": "bd_132529342258964",
+                },
+                "type": "danger"
             }],
             "tag": "action"
         }, {
